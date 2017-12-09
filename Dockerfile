@@ -37,4 +37,4 @@ RUN cd /root && git clone https://github.com/chjj/tty.js.git
 RUN cd /root/tty.js && npm install
 
 EXPOSE 8080
-ENTRYPOINT ["/bin/bash && nohup /root/tty.js/bin/tty.js &", "--daemonize"]
+ENTRYPOINT ["/bin/bash", "&&", "nohup", "/root/tty.js/bin/tty.js", "&", "--daemonize"]
