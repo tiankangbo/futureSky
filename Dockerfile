@@ -34,7 +34,7 @@ RUN npm install -g node-gyp
 RUN cd /root && git clone https://github.com/chjj/tty.js.git
 
 # 进入tty.js文件夹
-RUN npm install
+RUN cd /root/tty.js && npm install
 
 EXPOSE 8080
 ENTRYPOINT ["./root/tty.js/bin/tty.js"]
