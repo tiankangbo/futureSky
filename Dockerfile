@@ -1,40 +1,39 @@
-# version1.0
 FROM ubuntu:latest
 
-LABEL maintainer='tiankangbo'
+ENV DEBIAN_FRONTEND noninteractive
+ENV VERSION 8
+ENV UPDATE 121
+ENV BUILD 13
+ENV SIG e9e7ea248e2c4826b92b3f075a80e441
 
-# 更换apt源为阿里源
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse " > /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "171.8.242.176 mirrors.aliyun.com" >> /etc/hosts
-RUN echo "192.30.255.112 github.com" >> /etc/hosts
-RUN echo "151.101.72.162 registry.npmjs.org" >>/etc/hosts
-RUN echo "52.84.49.187 deb.nodesource.com" >>/etc/hosts
-RUN apt-get update && apt-get -y upgrade
+ENV JAVA_HOME /usr/lib/jvm/java-${VERSION}-oracle
+ENV JRE_HOME ${JAVA_HOME}/jre
 
-# 安装nodejs
-RUN apt-get update
-RUN apt-get install -y nodejs
-RUN apt-get install -y nodejs-legacy
-RUN apt-get update && apt-get install -y npm
+ENV OPENSSL_VERSION 1.0.2j
 
-# 更新npm镜像源，提速下载
-RUN npm config set registry https://registry.npm.taobao.org
-RUN npm config list
+RUN apt-get update && apt-get install ca-certificates curl \
+        gcc libc6-dev libssl-dev make \
+        -y --no-install-recommends && \
+	curl --silent --location --retry 3 --cacert /etc/ssl/certs/GeoTrust_Global_CA.pem \
+	--header "Cookie: oraclelicense=accept-securebackup-cookie;" \
+	http://download.oracle.com/otn-pub/java/jdk/"${VERSION}"u"${UPDATE}"-b"${BUILD}"/"${SIG}"/jre-"${VERSION}"u"${UPDATE}"-linux-x64.tar.gz \
+	| tar xz -C /tmp && \
+	mkdir -p /usr/lib/jvm && mv /tmp/jre1.${VERSION}.0_${UPDATE} "${JAVA_HOME}" && \
+	curl --silent --location --retry 3 --cacert /etc/ssl/certs/GlobalSign_Root_CA.pem \
+        https://www.openssl.org/source/openssl-"${OPENSSL_VERSION}".tar.gz \
+        | tar xz -C /tmp && \
+        cd /tmp/openssl-"${OPENSSL_VERSION}" && \
+                ./config --prefix=/usr && \
+                make clean && make && make install && \
+        apt-get remove --purge --auto-remove -y \
+                gcc \
+                libc6-dev \
+                libssl-dev \
+                make && \
+	apt-get autoclean && apt-get --purge -y autoremove && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# 安装git
-RUN apt-get install -y git
-
-# 加载tty.js
-RUN apt-get install -y build-essential
-RUN npm install -g node-gyp
-RUN cd /root && git clone https://github.com/chjj/tty.js.git
-
-# 进入tty.js文件夹
-RUN cd /root/tty.js && npm install
-
-EXPOSE 8080
-ENTRYPOINT ["/bin/bash"]
+RUN update-alternatives --install "/usr/bin/java" "java" "${JAVA_HOME}/bin/java" 1 && \
+	update-alternatives --install "/usr/bin/javaws" "javaws" "${JAVA_HOME}/bin/javaws" 1 && \
+	update-alternatives --set java "${JAVA_HOME}/bin/java" && \
+	update-alternatives --set javaws "${JAVA_HOME}/bin/javaws"
