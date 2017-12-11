@@ -16,7 +16,6 @@ RUN echo "52.84.49.187 deb.nodesource.com" >>/etc/hosts
 RUN apt-get update && apt-get -y upgrade
 
 # 安装nodejs
-RUN apt-get update
 RUN apt-get install -y nodejs
 RUN apt-get install -y nodejs-legacy
 RUN apt-get update && apt-get install -y npm
@@ -48,4 +47,4 @@ RUN apt-get update && \
 
 EXPOSE 8080
 #ENTRYPOINT ["/bin/bash && nohup /root/tty.js/bin/tty.js &", "--daemonize"]
-ENTRYPOINT ["cd","/usr/test"]
+ENTRYPOINT ["cd", "/usr/test"]
