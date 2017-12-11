@@ -47,4 +47,4 @@ RUN apt-get update && \
 
 EXPOSE 8080
 #ENTRYPOINT ["/bin/bash && nohup /root/tty.js/bin/tty.js &", "--daemonize"]
-ENTRYPOINT ["cd", "/usr/test"]
+ENTRYPOINT ["/bin/bash"]
