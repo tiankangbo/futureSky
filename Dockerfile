@@ -44,8 +44,8 @@ RUN apt-get update && \
     add-apt-repository ppa:webupd8team/java && \
     apt-get update && \
     apt-get install -y --no-install-recommends oracle-java8-installer && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && mkdir /usr/test
 
 EXPOSE 8080
 #ENTRYPOINT ["/bin/bash && nohup /root/tty.js/bin/tty.js &", "--daemonize"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["cd","/usr/test"]
