@@ -29,7 +29,8 @@ RUN pip3 install pymysql
 RUN pip3 install tornado
 RUN pip3 install lxml
 RUN pip3 install twisted
-RUN pip3 install bs4 
+RUN pip3 install bs4
+RUN pip3 install requests
 RUN apt-get -y autoremove
 RUN mkdir /mongo_value
 # mongod --dbpath=/mongo_value/
