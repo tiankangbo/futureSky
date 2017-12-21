@@ -20,10 +20,16 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends oracle-java8-installer && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get -y install python3-pip psutils mongodb
-RUN pip3 -y install pymongo pymysql tornado lxml twisted bs4 
+RUN apt-get update 
+RUN apt-get -y install python3-pip 
+RUN apt-get -y install psutils
+RUN apt-get -y install mongodb
+RUN pip3 -y install pymongo pymysql 
+RUN pip3 -y install tornado
+RUN pip3 -y install lxml
+RUN pip3 -y install twisted
+RUN pip3 -y install bs4 
 RUN apt-get -y autoremove
-
 
 EXPOSE 8000
 EXPOSE 8080
