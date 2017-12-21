@@ -24,12 +24,12 @@ RUN apt-get update
 RUN apt-get -y install python3-pip 
 RUN apt-get -y install psutils
 RUN apt-get -y install mongodb
-RUN pip3 -y install pymongo
-RUN pip3 -y install pymysql 
-RUN pip3 -y install tornado
-RUN pip3 -y install lxml
-RUN pip3 -y install twisted
-RUN pip3 -y install bs4 
+RUN pip3 install pymongo
+RUN pip3 install pymysql 
+RUN pip3 install tornado
+RUN pip3 install lxml
+RUN pip3 install twisted
+RUN pip3 install bs4 
 RUN apt-get -y autoremove
 
 EXPOSE 8000
