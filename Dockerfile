@@ -7,7 +7,7 @@ RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted 
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "171.8.242.176 mirrors.aliyun.com" >> /etc/hosts
+
 RUN apt-get update && apt-get -y upgrade
 
 # 安装java环境
@@ -20,10 +20,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends oracle-java8-installer && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get -y install python-dev && apt-get -y install python3-pip && apt-get -y install psutils
-RUN apt-get -y install mongodb && pip3 -y install pymongo && pip3 -y install pymysql && \
-    pip3 install tornado && pip3 install lxml && \
-    pip3 install twisted && pip3 install bs4 && apt-get -y autoremove
+RUN apt-get -y install python-dev python3-pip psutils mongodb
+RUN pip3 -y install pymongo  pymysql tornado lxml twisted bs4 && apt-get -y autoremove
 
 
 EXPOSE 8000
