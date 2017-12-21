@@ -1,40 +1,14 @@
-# version1.0
-FROM ubuntu:latest
+FROM ubuntu:14.04
 
-LABEL maintainer='tiankangbo'
+#RUN apt-get update
+RUN apt-get -y install mysql-server
+RUN /etc/init.d/mysql start \
+    && mysql -uroot -e "grant all privileges on *.* to 'root'@'%' identified by '1';" \
+    && mysql -uroot -e "grant all privileges on *.* to 'root'@'localhost' identified by '1';" 
 
-# 更换apt源为阿里源
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse " > /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "171.8.242.176 mirrors.aliyun.com" >> /etc/hosts
-RUN echo "192.30.255.112 github.com" >> /etc/hosts
-RUN echo "151.101.72.162 registry.npmjs.org" >>/etc/hosts
-RUN echo "52.84.49.187 deb.nodesource.com" >>/etc/hosts
-RUN apt-get update && apt-get -y upgrade
+RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf \
+    && echo 'skip-host-cache\nskip-name-resolve' | awk '{ print } $1 == "[mysqld]" && c == 0 { c = 1; system("cat") }' /etc/mysql/my.cnf > /tmp/my.cnf \
+    && mv /tmp/my.cnf /etc/mysql/my.cnf
 
-# 安装nodejs
-RUN apt-get update
-RUN apt-get install -y nodejs
-RUN apt-get install -y nodejs-legacy
-RUN apt-get update && apt-get install -y npm
-
-# 更新npm镜像源，提速下载
-RUN npm config set registry https://registry.npm.taobao.org
-RUN npm config list
-
-# 安装git
-RUN apt-get install -y git
-
-# 加载tty.js
-RUN apt-get install -y build-essential
-RUN npm install -g node-gyp
-RUN cd /root && git clone https://github.com/chjj/tty.js.git
-
-# 进入tty.js文件夹
-RUN cd /root/tty.js && npm install
-
-EXPOSE 8080
-ENTRYPOINT ["/bin/bash"]
+EXPOSE 3306  
+CMD ["/usr/bin/mysqld_safe"]
