@@ -31,6 +31,8 @@ RUN pip3 install lxml
 RUN pip3 install twisted
 RUN pip3 install bs4 
 RUN apt-get -y autoremove
+RUN mkdir /mongo_value
+# mongod --dbpath=/mongo_value/
 
 EXPOSE 8000
 EXPOSE 8080
