@@ -1,5 +1,6 @@
-FROM ubuntu:14.04
-
+# version1.0
+FROM ubuntu:latest
+LABEL maintainer='tiankangbo'
 # 更换apt源为阿里源
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse " > /etc/apt/sources.list
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list
@@ -7,16 +8,28 @@ RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted u
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "171.8.242.176 mirrors.aliyun.com" >> /etc/hosts
+RUN apt-get update && apt-get -y upgrade
 
-RUN apt-get update
-RUN apt-get -y install mysql-server
-RUN /etc/init.d/mysql start \
-    && mysql -uroot -e "grant all privileges on *.* to 'root'@'%' identified by 'pa$$w0rd';" \
-    && mysql -uroot -e "grant all privileges on *.* to 'root'@'localhost' identified by 'pa$$w0rd';" 
+# 安装java环境
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:webupd8team/java && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends oracle-java8-installer && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf \
-    && echo 'skip-host-cache\nskip-name-resolve' | awk '{ print } $1 == "[mysqld]" && c == 0 { c = 1; system("cat") }' /etc/mysql/my.cnf > /tmp/my.cnf \
-    && mv /tmp/my.cnf /etc/mysql/my.cnf
+RUN apt-get -y install python-dev && apt-get -y install python3-pip && apt-get -y install psutils
+RUN apt-get -y install mongodb && pip3 -y install pymongo && pip3 -y install pymysql && \
+    pip3 install tornado && pip3 install lxml && \
+    pip3 install twisted && pip3 install bs4 && apt-get -y autoremove
 
-EXPOSE 3306  
-CMD ["/usr/bin/mysqld_safe"]
+
+EXPOSE 8000
+EXPOSE 8080
+EXPOSE 3306
+EXPOSE 27017
+EXPOSE 8888
+
+ENTRYPOINT ["/bin/bash"]
