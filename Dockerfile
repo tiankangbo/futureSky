@@ -24,7 +24,8 @@ RUN apt-get update
 RUN apt-get -y install python3-pip 
 RUN apt-get -y install psutils
 RUN apt-get -y install mongodb
-RUN pip3 -y install pymongo pymysql 
+RUN pip3 -y install pymongo
+RUN pip3 -y install pymysql 
 RUN pip3 -y install tornado
 RUN pip3 -y install lxml
 RUN pip3 -y install twisted
