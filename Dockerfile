@@ -21,7 +21,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get -y install python3-pip psutils mongodb
-RUN pip3 -y install pymongo  pymysql tornado lxml twisted bs4 
+RUN pip3 -y install pymongo pymysql tornado lxml twisted bs4 
 RUN apt-get -y autoremove
 
 
